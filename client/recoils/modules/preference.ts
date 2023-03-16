@@ -4,7 +4,7 @@ import { KEYS } from "../keys";
 const preferenceState = atom({
   key: KEYS.PREFERENCE,
   default: {
-    age: "",
+    birthday: "",
     gender: "male",
     weight: "",
     weightUnit: "kg",
@@ -15,7 +15,7 @@ const preferenceState = atom({
     medications: [],
     healthConditions: [],
     mealAmount: "",
-    if: "",
+    fasting: "",
     foodAllergies: [],
     healthGoals: [],
   },

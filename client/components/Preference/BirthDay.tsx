@@ -3,26 +3,26 @@ import Input, { INPUT_TYPE } from "../Input/Input";
 import { useRecoilState } from "recoil";
 import { preferenceState } from "../../recoils";
 
-const Age = () => {
+const BirthDay = () => {
   const [preference, setPreference] = useRecoilState(preferenceState);
 
-  const handleAgeChange = (
+  const handleBDChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     e.preventDefault();
-    setPreference({ ...preference, age: e.target.value });
+    setPreference({ ...preference, birthday: e.target.value });
   };
 
   return (
     <>
       <Input
-        label="อายุ"
-        name="age"
+        label="วันเกิด"
+        name="birth_day"
         type={INPUT_TYPE.NUMBER}
-        onChange={handleAgeChange}
+        onChange={handleBDChange}
       />
     </>
   );
 };
 
-export default Age;
+export default BirthDay;

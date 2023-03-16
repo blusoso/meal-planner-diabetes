@@ -3,6 +3,11 @@ import Input, { INPUT_TYPE } from "../Input/Input";
 import { useRecoilState } from "recoil";
 import { preferenceState } from "../../recoils";
 
+export enum GENDER {
+  MALE = "male",
+  FEMALE = "female",
+}
+
 const Gender = () => {
   const [preference, setPreference] = useRecoilState(preferenceState);
 
@@ -18,8 +23,8 @@ const Gender = () => {
         <input
           type="radio"
           name="gender"
-          value="m"
-          checked={preference.gender === "m"}
+          value={GENDER.MALE}
+          checked={preference.gender === GENDER.MALE}
           onChange={handleGenderChange}
         />
         ผู้ชาย
@@ -28,8 +33,8 @@ const Gender = () => {
         <input
           type="radio"
           name="gender"
-          value="f"
-          checked={preference.gender === "f"}
+          value={GENDER.FEMALE}
+          checked={preference.gender === GENDER.FEMALE}
           onChange={handleGenderChange}
         />
         ผู้หญิง

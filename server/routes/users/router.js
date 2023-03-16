@@ -1,4 +1,5 @@
 import express from "express";
+import { updateUser } from "./controller.js";
 
 const router = express.Router();
 
@@ -6,5 +7,6 @@ const router = express.Router();
 router.get("/", async (req, res) => {
   res.status(200).send("Get users!");
 });
+router.post("/:userId", updateUser);
 
 export default router;

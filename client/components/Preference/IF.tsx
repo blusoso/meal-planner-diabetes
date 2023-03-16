@@ -14,7 +14,7 @@ const IF = () => {
   ];
 
   const handleIFChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setPreference({ ...preference, if: e.target.value });
+    setPreference({ ...preference, fasting: e.target.value });
   };
 
   return (
@@ -29,7 +29,7 @@ const IF = () => {
                 type="radio"
                 name="if"
                 value={fasting.name}
-                checked={preference.if === fasting.name}
+                checked={preference.fasting === fasting.name}
                 onChange={handleIFChange}
               />
               {fasting.label}

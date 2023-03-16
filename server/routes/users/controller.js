@@ -20,3 +20,21 @@ export const createUser = async (req, res) => {
     });
   });
 };
+
+export const updateUser = async (req, res) => {
+  const userId = req.params.userId;
+  const updates = req.body;
+  const options = { new: true };
+
+  User.findByIdAndUpdate(userId, updates, options)
+    .then((user) => {
+      if (!user) {
+        res.status(404).json("User not found");
+      } else {
+        res.status(200).json(user);
+      }
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    });
+};
