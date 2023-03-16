@@ -1,0 +1,57 @@
+@import url("https://fonts.googleapis.com/css2?family=Mitr:wght@200;300;400;500;600;700&display=swap");
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  font-family: "Mitr";
+  color: #1e1e1e;
+  font-weight: 300;
+  font-size: 14px;
+  position: relative;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+#__next {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow-y: scroll;
+}
+
+main {
+  min-height: 94.6%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@import "tailwindcss/base";
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 400;
+}
+
+h1 {
+  font-size: 24px;
+}
+
+h2 {
+  font-size: 20px;
+}
+
+h3 {
+  font-size: 16px;
+}
+
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
