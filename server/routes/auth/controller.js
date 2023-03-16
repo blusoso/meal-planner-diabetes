@@ -42,26 +42,26 @@ export const login = async (req, res) => {
 
     bcrypt.compare(password, user.password).then((isMatch) => {
       if (isMatch) {
-        // const payload = {
-        //   id: user.id,
-        //   name: user.name,
-        // };
+        const payload = {
+          id: user.id,
+          name: user.name,
+        };
 
-        // // Sign token
-        // jwt.sign(
-        //   payload,
-        //   jwt_secret,
-        //   {
-        //     expiresIn: 31556926, // 1 year in seconds
-        //   },
-        //   (err, token) => {
-        //     res.json({
-        //       success: true,
-        //       token: "Bearer " + token,
-        //     });
-        //   }
-        // );
-        generateToken();
+        // Sign token
+        jwt.sign(
+          payload,
+          jwt_secret,
+          {
+            expiresIn: 31556926, // 1 year in seconds
+          },
+          (err, token) => {
+            res.json({
+              success: true,
+              token: "Bearer " + token,
+            });
+          }
+        );
+        // generateToken(user);
       } else {
         return res
           .status(400)
