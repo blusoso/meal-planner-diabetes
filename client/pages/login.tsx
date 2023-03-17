@@ -9,16 +9,25 @@ import setAuthToken from "../utils/setAuthToken";
 import { useRecoilState } from "recoil";
 import { authState } from "../recoils";
 import { COOKIE_AGE, COOKIE_NAME } from "../utils/cookies";
+import { CustomAppProps } from "./_app";
+import getUser from "@/services/users/getUser";
+import { UserData, UserResponse } from "@/services/auth/me";
+
+type LoginProps = {} & CustomAppProps;
 
 const Login = () => {
   const router = useRouter();
-  const [auth, setAuth] = useRecoilState(authState);
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
   } = useForm();
+
+  const setupToken = async (token: string) => {
+    Cookies.set(COOKIE_NAME.TOKEN, token, { expires: COOKIE_AGE.TOKEN });
+    setAuthToken(token);
+  };
 
   const onSubmit = async (data: any) => {
     const { email, password } = data;
@@ -31,13 +40,16 @@ const Login = () => {
     const res: any = await login(loginRequest);
     if (res) {
       const { token } = res.data;
-      Cookies.set(COOKIE_NAME.TOKEN, token, { expires: COOKIE_AGE.TOKEN });
-      // localStorage.setItem("jwtToken", token);
-      setAuthToken(token);
+      await setupToken(token);
       const decoded: any = jwtDecode(token);
-      setAuth(decoded);
 
-      router.push("/");
+      const userRes: UserResponse = await getUser(decoded.id);
+
+      if (userRes.data.isSetPreference) {
+        router.push("/");
+      } else {
+        router.push("/preference");
+      }
     }
   };
 
