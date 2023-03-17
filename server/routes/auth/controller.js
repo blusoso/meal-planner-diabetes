@@ -70,3 +70,22 @@ export const login = async (req, res) => {
     });
   });
 };
+
+export const getMe = async (req, res) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader.split(" ")[1];
+
+  // verify the token
+  const decoded = jwt.verify(token, jwt_secret);
+  const userId = decoded.id;
+
+  User.findById(userId)
+    .populate("health")
+    .then((user) => {
+      if (!user) {
+        res.status(404).json("User not found");
+      } else {
+        res.status(200).json(user);
+      }
+    });
+};
