@@ -73,7 +73,15 @@ export const login = async (req, res) => {
 
 export const getMe = async (req, res) => {
   const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
   const token = authHeader.split(" ")[1];
+
+  if (!token) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
 
   // verify the token
   const decoded = jwt.verify(token, jwt_secret);
@@ -81,6 +89,7 @@ export const getMe = async (req, res) => {
 
   User.findById(userId)
     .populate("health")
+    .select("-password")
     .then((user) => {
       if (!user) {
         res.status(404).json("User not found");

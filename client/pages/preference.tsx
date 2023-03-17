@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 
-import { useRecoilState, useRecoilValue } from "recoil";
-import { authState, preferenceState } from "../recoils";
+import { useRecoilValue } from "recoil";
+import { preferenceState } from "../recoils";
 
 import Gender from "../components/Preference/Gender";
 import Weight from "../components/Preference/Weight";
@@ -15,21 +15,16 @@ import IF from "../components/Preference/IF";
 import FoodAllergy from "../components/Preference/FoodAllergy";
 import HealthGoal from "../components/Preference/HealthGoal";
 import BirthDay from "../components/Preference/BirthDay";
-import jwtDecode from "jwt-decode";
 import updateUser from "../services/users/updateUser";
 import createHealth from "../services/health/createHealth";
+import { CustomAppProps } from "./_app";
+import Layout from "@/components/Layout/Layout";
 
-const Preference = () => {
+type PreferenceProps = {} & CustomAppProps;
+
+const Preference = ({ auth }: PreferenceProps) => {
   const preference = useRecoilValue(preferenceState);
-  const [auth, setAuth] = useRecoilState(authState);
 
-  useEffect(() => {
-    const token = localStorage.getItem("jwtToken");
-    const decoded: any = jwtDecode(token || "");
-    setAuth(decoded);
-  }, []);
-
-  console.log(auth);
   const onSubmitPreference = async (e: any) => {
     e.preventDefault();
 
@@ -72,17 +67,17 @@ const Preference = () => {
         healthGoals,
       };
 
-      const updatedUserRes = await updateUser(auth.id, userInfo);
+      const updatedUserRes = await updateUser(auth._id, userInfo);
 
       if (updatedUserRes.data) {
-        const createdHealthRes = await createHealth(auth.id, healthInfo);
+        const createdHealthRes = await createHealth(auth._id, healthInfo);
         console.log("createdHealthRes", createdHealthRes);
       }
     }
   };
 
   return (
-    <div>
+    <Layout auth={auth} protectedPage>
       <form>
         <BirthDay />
         <br />
@@ -111,7 +106,7 @@ const Preference = () => {
           Submit
         </button>
       </form>
-    </div>
+    </Layout>
   );
 };
 

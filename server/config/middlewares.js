@@ -11,9 +11,6 @@ export const loginRequired = (req, res, next) => {
     if (err) return res.status(401).send(err);
     const userId = payload.id;
 
-    // console.log(userId);
-    // next();
-
     User.findById(userId)
       .then((user) => {
         if (!user) {
@@ -27,21 +24,5 @@ export const loginRequired = (req, res, next) => {
         console.error(err);
         return res.status(500).json({ error: "Server Error" });
       });
-
-    // User.findOne({ _id: payload.id }, null, { maxTimeMS: 15000 })
-    //   .then((user) => {
-    //     if (!user) {
-    //       return res
-    //         .status(404)
-    //         .json({ error: "middleware User not found!!!" });
-    //     }
-
-    //     delete user.password;
-    //     req.user = user;
-    //     next();
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
   });
 };

@@ -1,4 +1,5 @@
 import React from "react";
+import Cookies from "js-cookie";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import jwtDecode from "jwt-decode";
@@ -7,6 +8,7 @@ import login from "../services/auth/login";
 import setAuthToken from "../utils/setAuthToken";
 import { useRecoilState } from "recoil";
 import { authState } from "../recoils";
+import { COOKIE_AGE, COOKIE_NAME } from "../utils/cookies";
 
 const Login = () => {
   const router = useRouter();
@@ -29,7 +31,8 @@ const Login = () => {
     const res: any = await login(loginRequest);
     if (res) {
       const { token } = res.data;
-      localStorage.setItem("jwtToken", token);
+      Cookies.set(COOKIE_NAME.TOKEN, token, { expires: COOKIE_AGE.TOKEN });
+      // localStorage.setItem("jwtToken", token);
       setAuthToken(token);
       const decoded: any = jwtDecode(token);
       setAuth(decoded);

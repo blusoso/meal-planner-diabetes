@@ -6,6 +6,8 @@ import Button, { BUTTON_TYPE } from "../components/Button";
 import setAuthToken from "../utils/setAuthToken";
 import { useRecoilState } from "recoil";
 import { authState } from "../recoils";
+import Cookies from "js-cookie";
+import { COOKIE_NAME } from "../utils/cookies";
 
 export default function Home() {
   const router = useRouter();
@@ -14,7 +16,8 @@ export default function Home() {
   const onLogout = (e: any) => {
     e.preventDefault();
 
-    localStorage.removeItem("jwtToken");
+    Cookies.remove(COOKIE_NAME.TOKEN);
+    // localStorage.removeItem("jwtToken");
     setAuthToken("");
     setAuth(undefined);
   };
