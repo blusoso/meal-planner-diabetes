@@ -16,7 +16,8 @@ import FoodAllergy from "../components/Preference/FoodAllergy";
 import HealthGoal from "../components/Preference/HealthGoal";
 import BirthDay from "../components/Preference/BirthDay";
 import jwtDecode from "jwt-decode";
-import updateUser from "../services/auth/users/updateUser";
+import updateUser from "../services/users/updateUser";
+import createHealth from "../services/health/createHealth";
 
 const Preference = () => {
   const preference = useRecoilValue(preferenceState);
@@ -36,9 +37,12 @@ const Preference = () => {
       birthday,
       gender,
       weight,
+      weightUnit,
       height,
+      heightUnit,
       activityLevel,
       bloodSugarLevel,
+      medications,
       healthConditions,
       mealAmount,
       fasting,
@@ -51,13 +55,29 @@ const Preference = () => {
         birthday,
         gender,
         weight,
+        weightUnit,
         height,
-        activity_level: activityLevel,
-        is_set_preference: true,
+        heightUnit,
+        activityLevel,
+        isSetPreference: true,
       };
 
-      const res = await updateUser(auth.id, userInfo);
-      console.log(res.data);
+      const healthInfo = {
+        bloodSugarLevel,
+        medications,
+        healthConditions,
+        mealAmount,
+        fasting,
+        foodAllergies,
+        healthGoals,
+      };
+
+      const updatedUserRes = await updateUser(auth.id, userInfo);
+
+      if (updatedUserRes.data) {
+        const createdHealthRes = await createHealth(auth.id, healthInfo);
+        console.log("createdHealthRes", createdHealthRes);
+      }
     }
   };
 

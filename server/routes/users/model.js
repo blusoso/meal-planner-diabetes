@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-// Create Schema
 const UserSchema = new Schema({
   name: {
     type: String,
@@ -26,13 +25,19 @@ const UserSchema = new Schema({
   weight: {
     type: Number,
   },
+  weightUnit: {
+    type: String,
+  },
   height: {
     type: Number,
   },
-  activity_level: {
+  heightUnit: {
     type: String,
   },
-  is_set_preference: {
+  activityLevel: {
+    type: String,
+  },
+  isSetPreference: {
     type: Boolean,
     default: false,
   },
@@ -40,10 +45,10 @@ const UserSchema = new Schema({
     type: Date,
     default: Date.now,
   },
-  // healthInfo: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: "Health",
-  // },
+  health: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "health",
+  },
 });
 
 export const User = mongoose.model("users", UserSchema);

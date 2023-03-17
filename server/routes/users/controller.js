@@ -1,6 +1,20 @@
 import bcrypt from "bcryptjs";
 import { User } from "../users/model.js";
 
+export const getUser = async (req, res) => {
+  const userId = req.params.userId;
+
+  User.findById(userId)
+    .populate("health")
+    .then((user) => {
+      if (!user) {
+        res.status(404).json("User not found");
+      } else {
+        res.status(200).json(user);
+      }
+    });
+};
+
 export const createUser = async (req, res) => {
   const newUser = new User({
     name: req.body.name,

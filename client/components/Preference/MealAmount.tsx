@@ -6,16 +6,16 @@ import { preferenceState } from "../../recoils";
 const MealAmount = () => {
   const [preference, setPreference] = useRecoilState(preferenceState);
   const mealAmountList = [
-    { value: "1", label: "1 มื้อต่อวัน" },
-    { value: "2", label: "2 มื้อต่อวัน" },
-    { value: "3", label: "3 มื้อต่อวัน" },
-    { value: "4", label: "4 มื้อต่อวัน" },
+    { value: 1, label: "1 มื้อต่อวัน" },
+    { value: 2, label: "2 มื้อต่อวัน" },
+    { value: 3, label: "3 มื้อต่อวัน" },
+    { value: 4, label: "4 มื้อต่อวัน" },
   ];
 
   const handleMealAmountChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setPreference({ ...preference, mealAmount: e.target.value });
+    setPreference({ ...preference, mealAmount: parseInt(e.target.value) });
   };
 
   return (

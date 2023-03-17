@@ -8,7 +8,7 @@ const Height = () => {
 
   const handleHeightChange = (e: any) => {
     e.preventDefault();
-    setPreference({ ...preference, height: e.target.value });
+    setPreference({ ...preference, height: parseFloat(e.target.value) });
   };
 
   return (

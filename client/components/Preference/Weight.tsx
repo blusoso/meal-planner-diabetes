@@ -8,7 +8,7 @@ const Weight = () => {
 
   const handleWeightChange = (e: any) => {
     e.preventDefault();
-    setPreference({ ...preference, weight: e.target.value });
+    setPreference({ ...preference, weight: parseFloat(e.target.value) });
   };
 
   return (
