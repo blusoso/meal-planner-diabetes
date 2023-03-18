@@ -31,7 +31,7 @@ const BloodSugarLevel = () => {
         <span>{preference.bloodSugarLevel} mg/dL</span>
       </label> */}
       <label>
-        ระดับน้ำตาลในเลือด
+        ระดับน้ำตาลในเลือด Glycemic index
         <br />
         <input
           type="text"

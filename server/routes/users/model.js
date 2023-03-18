@@ -37,6 +37,9 @@ const UserSchema = new Schema({
   activityLevel: {
     type: String,
   },
+  calorieIntake: {
+    type: Number,
+  },
   isSetPreference: {
     type: Boolean,
     default: false,

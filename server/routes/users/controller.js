@@ -1,5 +1,22 @@
 import bcrypt from "bcryptjs";
-import { User } from "../users/model.js";
+import { User } from "./model.js";
+
+export const calculateAge = (birthday) => {
+  const today = new Date();
+  const birthDate = new Date(birthday);
+
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && today.getDate() < birthDate.getDate())
+  ) {
+    age--;
+  }
+
+  return age;
+};
 
 export const getUser = async (req, res) => {
   const userId = req.params.userId;

@@ -14,7 +14,6 @@ type HomeProps = {} & CustomAppProps;
 
 const Home = ({ auth }: HomeProps) => {
   const router = useRouter();
-  console.log("auth", auth);
 
   const onLogout = (e: any) => {
     e.preventDefault();
