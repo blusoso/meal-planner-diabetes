@@ -31,6 +31,11 @@ const HealthGoal = () => {
     }
   };
 
+  const handleWeightGoalChange = (e) => {
+    e.preventDefault();
+    setPreference({ ...preference, weightGoal: parseFloat(e.target.value) });
+  };
+
   return (
     <>
       <label>Health Goals:</label>
@@ -47,6 +52,15 @@ const HealthGoal = () => {
           <label htmlFor={option.value}>{option.label}</label>
         </div>
       ))}
+
+      {preference.healthGoals.includes("weight_loss") && (
+        <Input
+          label="น้ำหนักที่ต้องการ (กิโลกรัม)"
+          name="weight"
+          type={INPUT_TYPE.NUMBER}
+          onChange={handleWeightGoalChange}
+        />
+      )}
     </>
   );
 };

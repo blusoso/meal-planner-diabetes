@@ -18,6 +18,7 @@ const preferenceState = atom({
     fasting: "",
     foodAllergies: [],
     healthGoals: [],
+    weightGoal: 0,
   },
 });
 

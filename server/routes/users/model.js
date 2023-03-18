@@ -40,6 +40,9 @@ const UserSchema = new Schema({
   calorieIntake: {
     type: Number,
   },
+  weightGoal: {
+    type: Number,
+  },
   isSetPreference: {
     type: Boolean,
     default: false,

@@ -68,7 +68,8 @@ export const updateUser = async (req, res) => {
     updates.heightUnit,
     age,
     updates.activityLevel,
-    updates.healthGoals
+    updates.healthGoals,
+    updates.weightGoal
   );
 
   updates.calorieIntake = calorieIntake;

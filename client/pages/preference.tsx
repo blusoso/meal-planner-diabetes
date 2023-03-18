@@ -44,6 +44,7 @@ const Preference = ({ auth }: PreferenceProps) => {
       fasting,
       foodAllergies,
       healthGoals,
+      weightGoal,
     } = preference;
 
     if (auth) {
@@ -56,6 +57,7 @@ const Preference = ({ auth }: PreferenceProps) => {
         heightUnit,
         activityLevel,
         healthGoals,
+        weightGoal,
         isSetPreference: true,
       };
 
