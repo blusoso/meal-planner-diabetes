@@ -32,6 +32,29 @@ export const calculateTDEE = (bmr, activityLevel) => {
   return tdee;
 };
 
+export const predictWeightLoss = (
+  currentWeight,
+  goalWeight,
+  calorieIntake,
+  tdee
+) => {
+  // Calculate calorie deficit for each day
+  const dailyCalorieDeficit = tdee - calorieIntake;
+
+  // Calculate weight loss in kg for each day
+  const kgPerDay = 7700 / dailyCalorieDeficit;
+
+  // Round to 2 decimal places
+  const roundedKgPerDay = Math.round(kgPerDay * 100) / 100;
+
+  // Calculate days to reach goal weight
+  const daysToGoalWeight = Math.ceil(
+    (currentWeight - goalWeight) * roundedKgPerDay
+  );
+
+  return daysToGoalWeight;
+};
+
 export const calculateCalorieIntake = (
   gender,
   weight,
@@ -40,7 +63,8 @@ export const calculateCalorieIntake = (
   heightUnit,
   age,
   activityLevel,
-  healthGoals
+  healthGoals,
+  weightGoal
 ) => {
   let weightInKg = weight;
   let heightInCm = height;
@@ -83,7 +107,18 @@ export const calculateCalorieIntake = (
   //   calorieIntake = Math.round(calorieIntake * 1.1);
   // }
 
-  return calorieIntake;
+  const daysToGoalWeight = predictWeightLoss(
+    weightInKg,
+    weightGoal,
+    calorieIntake,
+    tdee
+  );
+
+  return {
+    calorieIntake,
+    daysToGoalWeight,
+    tdee,
+  };
 };
 
 export const createHealth = async (req, res) => {

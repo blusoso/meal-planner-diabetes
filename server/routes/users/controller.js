@@ -60,7 +60,7 @@ export const updateUser = async (req, res) => {
 
   const age = calculateAge(birthday);
 
-  const calorieIntake = calculateCalorieIntake(
+  const { calorieIntake, daysToGoalWeight, tdee } = calculateCalorieIntake(
     updates.gender,
     updates.weight,
     updates.weightUnit,
@@ -73,6 +73,8 @@ export const updateUser = async (req, res) => {
   );
 
   updates.calorieIntake = calorieIntake;
+  // updates.daysToGoalWeight = daysToGoalWeight;
+  // updates.tdee = tdee;
 
   User.findByIdAndUpdate(userId, updates, options)
     .then((user) => {
