@@ -1,4 +1,4 @@
-import axios from "axios";
+import Axios from "@/utils/axios";
 
 export type UserData = {
   _id: string;
@@ -20,12 +20,14 @@ export type UserResponse = {
   data: UserData;
 };
 
-const me = async (): Promise<UserResponse> => {
-  const result = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/me`
-  );
+export type MeRequest = {
+  token: string | undefined;
+};
+
+const fetchAuth = async ({ token }: MeRequest): Promise<UserResponse> => {
+  const result = await Axios.get(`/auth/me`);
 
   return { data: result.data };
 };
 
-export default me;
+export default fetchAuth;

@@ -8,10 +8,13 @@ import { useRecoilState } from "recoil";
 import { authState } from "../recoils";
 import Cookies from "js-cookie";
 import { COOKIE_NAME } from "../utils/cookies";
+import { CustomAppProps } from "./_app";
 
-export default function Home() {
+type HomeProps = {} & CustomAppProps;
+
+const Home = ({ auth }: HomeProps) => {
   const router = useRouter();
-  const [auth, setAuth] = useRecoilState(authState);
+  console.log("auth", auth);
 
   const onLogout = (e: any) => {
     e.preventDefault();
@@ -19,7 +22,6 @@ export default function Home() {
     Cookies.remove(COOKIE_NAME.TOKEN);
     // localStorage.removeItem("jwtToken");
     setAuthToken("");
-    setAuth(undefined);
   };
 
   return (
@@ -46,9 +48,9 @@ export default function Home() {
         <button onClick={() => router.push("/register")}>Register</button>
         <button onClick={() => router.push("/login")}>Login</button>
         <button onClick={onLogout}>Logout</button>
-
-        <div>{auth && `Hello, ${auth.name}`}</div>
       </main>
     </div>
   );
-}
+};
+
+export default Home;

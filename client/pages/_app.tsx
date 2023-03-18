@@ -26,15 +26,18 @@ CustomApp.getInitialProps = async (appContext: any) => {
   let auth: UserData | null = null;
 
   try {
-    const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/me`,
-      { headers: { Authorization: token } }
-    );
+    if (token) {
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/me`,
+        { headers: { Authorization: token } }
+      );
 
-    auth = res.data;
-    const appProps = await App.getInitialProps(appContext);
+      auth = res.data;
+      const appProps = await App.getInitialProps(appContext);
 
-    return { ...appProps, auth };
+      return { ...appProps, auth };
+    }
+    return { auth: null };
   } catch (err) {
     console.error(err);
     return { auth: null };

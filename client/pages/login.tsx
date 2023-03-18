@@ -46,9 +46,9 @@ const Login = () => {
       const userRes: UserResponse = await getUser(decoded.id);
 
       if (userRes.data.isSetPreference) {
-        router.push("/");
+        window.location.replace("/");
       } else {
-        router.push("/preference");
+        window.location.replace("/preference");
       }
     }
   };

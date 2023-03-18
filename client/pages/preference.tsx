@@ -19,15 +19,16 @@ import updateUser from "../services/users/updateUser";
 import createHealth from "../services/health/createHealth";
 import { CustomAppProps } from "./_app";
 import Layout from "@/components/Layout/Layout";
+import { useRouter } from "next/router";
 
 type PreferenceProps = {} & CustomAppProps;
 
 const Preference = ({ auth }: PreferenceProps) => {
+  const router = useRouter();
   const preference = useRecoilValue(preferenceState);
 
   const onSubmitPreference = async (e: any) => {
     e.preventDefault();
-
     const {
       birthday,
       gender,
@@ -71,12 +72,15 @@ const Preference = ({ auth }: PreferenceProps) => {
 
       if (updatedUserRes.data) {
         const createdHealthRes = await createHealth(auth._id, healthInfo);
+        if (createdHealthRes.data) {
+          window.location.replace("/");
+        }
       }
     }
   };
 
   return (
-    <Layout protectedPage>
+    <Layout auth={auth} protectedPage>
       <form>
         <BirthDay />
         <br />

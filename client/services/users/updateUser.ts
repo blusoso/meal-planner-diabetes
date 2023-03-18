@@ -1,3 +1,4 @@
+import Axios from "@/utils/axios";
 import axios from "axios";
 
 export type LoginRequest = {
@@ -17,10 +18,7 @@ export type LoginResponse = {
 };
 
 const updateUser = async (userId: string, request: any) => {
-  const result = await axios.post(
-    `${process.env.NEXT_PUBLIC_API_ENDPOINT}/users/${userId}`,
-    request
-  );
+  const result = await Axios.post(`/users/${userId}`, request);
 
   return { data: result.data };
 };
