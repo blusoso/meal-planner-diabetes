@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import { User } from "./model.js";
+import { calculateCalorieIntake } from "../health/controller.js";
 
 export const calculateAge = (birthday) => {
   const today = new Date();
@@ -54,8 +55,23 @@ export const createUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   const userId = req.params.userId;
-  const updates = req.body;
+  const { birthday, ...updates } = req.body;
   const options = { new: true };
+
+  const age = calculateAge(birthday);
+
+  const calorieIntake = calculateCalorieIntake(
+    updates.gender,
+    updates.weight,
+    updates.weightUnit,
+    updates.height,
+    updates.heightUnit,
+    age,
+    updates.activityLevel,
+    updates.healthGoals
+  );
+
+  updates.calorieIntake = calorieIntake;
 
   User.findByIdAndUpdate(userId, updates, options)
     .then((user) => {

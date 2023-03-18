@@ -55,6 +55,7 @@ const Preference = ({ auth }: PreferenceProps) => {
         height,
         heightUnit,
         activityLevel,
+        healthGoals,
         isSetPreference: true,
       };
 

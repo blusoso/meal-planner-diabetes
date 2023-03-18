@@ -2,7 +2,7 @@ import { User } from "../users/model.js";
 import { Health } from "./model.js";
 
 export const calculateBMR = (gender, weight, height, age) => {
-  const heightInCm = height * 100;
+  const heightInCm = height;
   const weightInKg = weight;
 
   let bmr = 0;
@@ -50,38 +50,38 @@ export const calculateCalorieIntake = (
   }
 
   if (heightUnit === "in") {
-    heightInCm = height * 30.48;
+    heightInCm = height * 2.54;
   }
 
   const bmr = calculateBMR(gender, weightInKg, heightInCm, age);
   const tdee = calculateTDEE(bmr, activityLevel);
-  let calorieIntake = tdee;
+  let calorieIntake = Math.round(tdee);
 
   if (healthGoals.includes("weight_loss")) {
     calorieIntake = Math.round(tdee * 0.8);
   } else if (healthGoals.includes("maintain_weight")) {
-    calorieIntake = tdee;
+    calorieIntake = Math.round(tdee);
   }
 
-  if (healthGoals.includes("improve_blood_sugar")) {
-    calorieIntake = Math.round(calorieIntake * 0.9);
-  }
+  // if (healthGoals.includes("improve_blood_sugar")) {
+  //   calorieIntake = Math.round(calorieIntake * 0.9);
+  // }
 
-  if (healthGoals.includes("lower_blood_pressure")) {
-    calorieIntake = Math.round(calorieIntake * 0.9);
-  }
+  // if (healthGoals.includes("lower_blood_pressure")) {
+  //   calorieIntake = Math.round(calorieIntake * 0.9);
+  // }
 
-  if (healthGoals.includes("lower_cholesterol")) {
-    calorieIntake = Math.round(calorieIntake * 0.9);
-  }
+  // if (healthGoals.includes("lower_cholesterol")) {
+  //   calorieIntake = Math.round(calorieIntake * 0.9);
+  // }
 
-  if (healthGoals.includes("improve_digestion")) {
-    calorieIntake = Math.round(calorieIntake * 1.1);
-  }
+  // if (healthGoals.includes("improve_digestion")) {
+  //   calorieIntake = Math.round(calorieIntake * 1.1);
+  // }
 
-  if (healthGoals.includes("increase_energy")) {
-    calorieIntake = Math.round(calorieIntake * 1.1);
-  }
+  // if (healthGoals.includes("increase_energy")) {
+  //   calorieIntake = Math.round(calorieIntake * 1.1);
+  // }
 
   return calorieIntake;
 };
