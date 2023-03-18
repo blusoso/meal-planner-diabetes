@@ -3,10 +3,10 @@ import axios from "axios";
 import App, { AppProps } from "next/app";
 import { RecoilRoot } from "recoil";
 
-import { MeData } from "../services/auth/me";
+import { UserData } from "../services/auth/me";
 import { COOKIE_NAME } from "../utils/cookies";
 
-export type CustomAppProps = { auth?: MeData };
+export type CustomAppProps = { auth?: UserData };
 
 const CustomApp = ({
   Component,
@@ -23,7 +23,7 @@ const CustomApp = ({
 CustomApp.getInitialProps = async (appContext: any) => {
   const { req } = appContext.ctx;
   const token = req?.cookies[COOKIE_NAME.TOKEN];
-  let auth: MeData | null = null;
+  let auth: UserData | null = null;
 
   try {
     const res = await axios.get(

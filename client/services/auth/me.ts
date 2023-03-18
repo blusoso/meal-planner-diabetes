@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export type MeData = {
+export type UserData = {
   _id: string;
   name: string;
   email: string;
@@ -16,11 +16,11 @@ export type MeData = {
   health: any;
 };
 
-export type MeResponse = {
-  data: MeData;
+export type UserResponse = {
+  data: UserData;
 };
 
-const me = async (): Promise<MeResponse> => {
+const me = async (): Promise<UserResponse> => {
   const result = await axios.get(
     `${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/me`
   );

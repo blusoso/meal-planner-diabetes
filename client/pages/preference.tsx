@@ -71,13 +71,12 @@ const Preference = ({ auth }: PreferenceProps) => {
 
       if (updatedUserRes.data) {
         const createdHealthRes = await createHealth(auth._id, healthInfo);
-        console.log("createdHealthRes", createdHealthRes);
       }
     }
   };
 
   return (
-    <Layout auth={auth} protectedPage>
+    <Layout protectedPage>
       <form>
         <BirthDay />
         <br />
