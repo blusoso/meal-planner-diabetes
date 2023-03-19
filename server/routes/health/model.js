@@ -20,6 +20,12 @@ const HealthSchema = new Schema({
   foodAllergies: {
     type: [String],
   },
+  diabetes: {
+    type: String,
+  },
+  sugarIntakeGram: {
+    type: Number,
+  },
   healthGoals: {
     type: [String],
   },

@@ -121,28 +121,50 @@ export const calculateCalorieIntake = (
   };
 };
 
+export const calculateLimitSugarIntake = (diabetes) => {
+  let sugarIntake;
+
+  switch (diabetes) {
+    case "diabetes":
+    case "risk of diabetes":
+      sugarIntake = 25;
+      break;
+
+    case "normal":
+    default:
+      sugarIntake = 50;
+      break;
+  }
+
+  return sugarIntake;
+};
+
 export const createHealth = async (req, res) => {
   try {
     const { userId } = req.params;
     const healthData = req.body;
 
-    const health = new Health({
-      ...healthData,
-    });
-
-    const newHealth = await health.save();
-
-    const user = await User.findByIdAndUpdate(
-      userId,
-      { health: newHealth._id },
-      { new: true }
-    ).exec();
+    const user = await User.findById(userId).populate("health").exec();
 
     if (!user) {
       res.status(404).json("User not found");
     }
 
-    res.status(200).json(user);
+    const sugarIntakeGram = calculateLimitSugarIntake(healthData.diabetes);
+    healthData.sugarIntakeGram = sugarIntakeGram;
+
+    if (!user.health) {
+      const health = new Health({
+        ...healthData,
+      });
+      user.health = health;
+    } else {
+      user.health.set(healthData);
+    }
+
+    const updatedUser = await user.save();
+
+    res.status(200).json(updatedUser);
   } catch (error) {
     res.status(500).json(error);
   }

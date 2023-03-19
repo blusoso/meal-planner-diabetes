@@ -20,6 +20,7 @@ import createHealth from "../services/health/createHealth";
 import { CustomAppProps } from "./_app";
 import Layout from "@/components/Layout/Layout";
 import { useRouter } from "next/router";
+import Diabetes from "@/components/Preference/Diabetes";
 
 type PreferenceProps = {} & CustomAppProps;
 
@@ -43,6 +44,7 @@ const Preference = ({ auth }: PreferenceProps) => {
       mealAmount,
       fasting,
       foodAllergies,
+      diabetes,
       healthGoals,
       weightGoal,
     } = preference;
@@ -68,6 +70,7 @@ const Preference = ({ auth }: PreferenceProps) => {
         mealAmount,
         fasting,
         foodAllergies,
+        diabetes,
         healthGoals,
       };
 
@@ -105,6 +108,8 @@ const Preference = ({ auth }: PreferenceProps) => {
         <IF />
         <br />
         <FoodAllergy />
+        <br />
+        <Diabetes />
         <br />
         <HealthGoal />
         <br />
