@@ -33,6 +33,10 @@ const HealthSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  nutrition: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "nutrition",
+  },
 });
 
 export const Health = mongoose.model("health", HealthSchema);

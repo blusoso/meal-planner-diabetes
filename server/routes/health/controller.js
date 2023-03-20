@@ -1,4 +1,5 @@
 import { User } from "../users/model.js";
+import { Nutrition } from "../nutrition/model.js";
 import { Health } from "./model.js";
 
 export const calculateBMR = (gender, weight, height, age) => {
@@ -139,25 +140,41 @@ export const calculateLimitSugarIntake = (diabetes) => {
   return sugarIntake;
 };
 
+export const matchNutrition = async (diabetesType) => {
+  try {
+    const nutrition = await Nutrition.findOne({ name: diabetesType });
+    if (!nutrition) {
+      return res.status(404).json({ message: "Nutrition not found" });
+    }
+
+    return nutrition;
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 export const createHealth = async (req, res) => {
   try {
     const { userId } = req.params;
     const healthData = req.body;
 
-    const user = await User.findById(userId).populate("health").exec();
+    const sugarIntakeGram = calculateLimitSugarIntake(healthData.diabetes);
+    const nutrition = await matchNutrition(healthData.diabetes);
 
+    healthData.sugarIntakeGram = sugarIntakeGram;
+    healthData.nutrition = nutrition;
+
+    const user = await User.findById(userId).populate("health").exec();
     if (!user) {
       res.status(404).json("User not found");
     }
-
-    const sugarIntakeGram = calculateLimitSugarIntake(healthData.diabetes);
-    healthData.sugarIntakeGram = sugarIntakeGram;
 
     if (!user.health) {
       const health = new Health({
         ...healthData,
       });
-      user.health = health;
+      const newHealth = await health.save();
+      user.health = newHealth;
     } else {
       user.health.set(healthData);
     }
