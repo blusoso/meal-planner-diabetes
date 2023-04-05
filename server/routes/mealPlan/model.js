@@ -2,9 +2,12 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const MealPlanSchema = new Schema({
-  mealName: {
+  name: {
     type: String,
     required: true,
+  },
+  lang: {
+    type: String,
   },
   ingredients: {
     type: [
@@ -24,7 +27,6 @@ const MealPlanSchema = new Schema({
         },
       },
     ],
-    required: true,
   },
   calories: {
     type: String,
@@ -53,4 +55,4 @@ const MealPlanSchema = new Schema({
   },
 });
 
-export const MealPlan = mongoose.model("mealPlans", MealPlanSchema);
+export const MealPlan = mongoose.model("meal_plans", MealPlanSchema);

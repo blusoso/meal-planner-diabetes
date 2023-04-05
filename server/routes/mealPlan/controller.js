@@ -1,8 +1,16 @@
 import { measurementList } from "../../utils/measurements.js";
+import { mergedWithComma } from "../../utils/mergeArray.js";
 import { mockMealPlanData } from "../../utils/mockMealPlanData.js";
 import { prepList } from "../../utils/preps.js";
 import { weekdays } from "../../utils/weekdays.js";
 import { MealPlan } from "./model.js";
+import { Configuration, OpenAIApi } from "openai";
+
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+const openai = new OpenAIApi(configuration);
 
 export const extractMealName = (text) => {
   const mealRegex = /Meal \d+: (.+)/g;
@@ -105,53 +113,71 @@ export const extractCookingTime = (mealData, mealName) => {
   return match ? parseInt(match[1]) : null;
 };
 
+// export const extractMealPlanData = (mealPlanData) => {
+//   let mealPlan = {};
+
+//   // Extract ingredients for each day of the week
+//   weekdays.forEach((day, dayIndex) => {
+//     if (mealPlanData.includes(day)) {
+//       const dayRegex = new RegExp(day + ":([^]*)");
+//       const dayMatch = mealPlanData.match(dayRegex);
+//       if (dayMatch) {
+//         mealPlan[`day${dayIndex + 1}`] = {};
+
+//         for (let i = 1; i <= 3; i++) {
+//           const mealNameRegex = new RegExp(`Meal ${i}: (.*)`);
+//           const mealNameMatch = dayMatch[0].match(mealNameRegex);
+//           if (mealNameMatch) {
+//             const mealName = mealNameMatch[1];
+//             mealPlan[`day${dayIndex + 1}`][`meal${i}`] = {
+//               name: mealName,
+//               ingredients: extractIngredient(dayMatch[0], mealName),
+//               calories: extractCalories(dayMatch[0], mealName),
+//               nutrition: extractNutrition(dayMatch[0], mealName),
+//               cookingTime: extractCookingTime(dayMatch[0], mealName),
+//             };
+//           }
+//         }
+//       }
+//     }
+//   });
+
+export const matchMeal = (dayMatch, mealRegex, mealWord) => {
+  const mealMatched = dayMatch[1].match(mealRegex);
+
+  if (mealMatched) {
+    return mealMatched[0].replace(`${mealWord}: `, "");
+  }
+
+  return null;
+};
+
 export const extractMealPlanData = (mealPlanData) => {
   let mealPlan = {};
+
+  const breakfastRegex = /Breakfast: ([^\n]*)/g;
+  const lunchRegex = /Lunch: ([^\n]*)/g;
+  const dinnerRegex = /Dinner: ([^\n]*)/g;
 
   // Extract ingredients for each day of the week
   weekdays.forEach((day, dayIndex) => {
     if (mealPlanData.includes(day)) {
       const dayRegex = new RegExp(day + ":([^]*)");
       const dayMatch = mealPlanData.match(dayRegex);
-      if (dayMatch) {
-        mealPlan[`day${dayIndex + 1}`] = {};
 
-        for (let i = 1; i <= 3; i++) {
-          const mealNameRegex = new RegExp(`Meal ${i}: (.*)`);
-          const mealNameMatch = dayMatch[0].match(mealNameRegex);
-          if (mealNameMatch) {
-            const mealName = mealNameMatch[1];
-            mealPlan[`day${dayIndex + 1}`][`meal${i}`] = {
-              name: mealName,
-              ingredients: extractIngredient(dayMatch[0], mealName),
-              calories: extractCalories(dayMatch[0], mealName),
-              nutrition: extractNutrition(dayMatch[0], mealName),
-              cookingTime: extractCookingTime(dayMatch[0], mealName),
-            };
-          }
-        }
+      if (dayMatch) {
+        let dayArr = (mealPlan[`day${dayIndex + 1}`] = []);
+
+        const meal1 = matchMeal(dayMatch, breakfastRegex, "Breakfast");
+        const meal2 = matchMeal(dayMatch, lunchRegex, "Lunch");
+        const meal3 = matchMeal(dayMatch, dinnerRegex, "Dinner");
+
+        if (meal1) dayArr.push(meal1);
+        if (meal2) dayArr.push(meal2);
+        if (meal3) dayArr.push(meal3);
       }
     }
   });
-
-  // Extract meal information for each day
-  // const days = mealPlanData.split(/Day \d+:?/).slice(1);
-
-  // days.forEach((day, index) => {
-  //   const meals = day.split(/Meal \d:/).slice(1);
-  //   mealPlan[`day${index + 1}`] = meals.map((meal) => {
-  //     const [name, ingredients, ...details] = meal.split(/\n/).filter(Boolean);
-  //     const [calories, nutritionInfo, budget, cookingTime] = details;
-  //     return {
-  //       name,
-  //       ingredients,
-  //       calories,
-  //       nutritionInfo,
-  //       budget,
-  //       cookingTime,
-  //     };
-  //   });
-  // });
 
   return mealPlan;
 };
@@ -172,9 +198,75 @@ export const replaceDayNames = (text) => {
 
 export const cleanText = (text) => {
   let cleanedText = text.replace(/\*\*/g, "");
+
+  // Day 1, ... , Day 7 case
   cleanedText = replaceDayNames(cleanedText);
 
+  // remove words in meal
+  cleanedText = cleanedText.replace("Thai", "");
+
   return cleanedText;
+};
+
+export const createChatCompletion = async (req, res) => {
+  const {
+    diabetes,
+    healthConditions,
+    healthGoals,
+    calorieIntake,
+    mealAmount,
+    foodAllergies,
+  } = req.body;
+
+  const diabetesText =
+    diabetes === "diabetes" || diabetes === "risk of diabetes"
+      ? "type 2 diabetes with"
+      : "";
+
+  const mergedHealthConditions = mergedWithComma(healthConditions);
+  const mergedHealthGoals = mergedWithComma(healthGoals);
+  const mergedFoodAllergies = mergedWithComma(foodAllergies);
+
+  const foodAllergiesText = mergedFoodAllergies
+    ? `allergic to ${mergedFoodAllergies}`
+    : "";
+
+  try {
+    const prompt = `Suggest personalized weekly meal plan for
+    ${diabetesText} ${mergedHealthConditions}
+    who wants to ${mergedHealthGoals} within ${calorieIntake} calories intake per day, 
+    ${mealAmount} meals per day and prefers of vegan, gluten-free. 
+    ${foodAllergiesText}. 
+    budget of 1000 baht per week, 
+    needs meals that can be prepared in under 30 minutes. 
+    ingredients available and easy to find in Thailand. 
+    give meal names in each day`;
+
+    const options = {
+      temperature: 0.2,
+      max_tokens: 400,
+    };
+
+    const response = await openai.createCompletion({
+      model: "text-davinci-003",
+      prompt: prompt,
+      ...options,
+    });
+
+    return response.data.choices[0].text;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
+export const createMealName = async ({ mealName, lang }) => {
+  MealPlan.findOne({ name: mealName }).then(async (meal) => {
+    if (!meal) {
+      const newMealPlan = new MealPlan({ name: mealName, lang });
+      await newMealPlan.save();
+    }
+  });
 };
 
 export const createMealPlan = async (req, res) => {
@@ -191,8 +283,49 @@ export const createMealPlan = async (req, res) => {
     const text =
       "1 cup cooked quinoa, 1/2 cup cooked black beans, 1/2 cup cooked corn, 1/2 cup diced bell pepper, 1/4 cup diced red onion, 1/4 cup diced tomatoes, 1/4 cup diced cucumber, 2 tablespoons olive oil, 1 tablespoon lime juice, 1/4 teaspoon garlic powder, 1/4 teaspoon cumin, Salt and pepper to taste";
 
+    // const response = createChatCompletion(req, res);
     const cleanedMealPlanData = cleanText(mockMealPlanData);
-    res.status(200).json(extractMealPlanData(cleanedMealPlanData));
+    const mealPlanJSON = extractMealPlanData(cleanedMealPlanData);
+
+    for (const day in mealPlanJSON) {
+      const mealListEachDay = mealPlanJSON[day];
+
+      mealListEachDay.map(async (mealName) => {
+        await createMealName({ mealName, lang: "en" });
+      });
+    }
+
+    res.status(200).json(mealPlanJSON);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const regenerateMealName = async (req, res) => {
+  const { mealName, foodAllergies } = req.body;
+
+  const mergedFoodAllergies = mergedWithComma(foodAllergies);
+  const foodAllergiesText = mergedFoodAllergies
+    ? `allergic to ${mergedFoodAllergies}`
+    : "";
+
+  try {
+    const prompt = `Suggest a meal name that calories equal to 
+    ${mealName}. prefers of vegan, gluten-free. ${foodAllergiesText}.
+    ingredients available and easy to find in Thailand`;
+
+    const options = {
+      temperature: 0.7,
+      max_tokens: 100,
+    };
+
+    const response = await openai.createCompletion({
+      model: "text-davinci-003",
+      prompt: prompt,
+      ...options,
+    });
+
+    res.status(200).send(response.data.choices[0].text);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
